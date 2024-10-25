@@ -1,13 +1,13 @@
 from pydub import AudioSegment
-from openai import OpenAI
+import openai
 import yt_dlp
 import os
-
-# Set your OpenAI API key
-openai_api_key = "apikey"
+from dotenv import load_dotenv
 
 # Initialize the OpenAI client with your API key
-client = OpenAI(api_key=openai_api_key)
+load_dotenv()
+client = OpenAI()
+
 
 # Function to download YouTube video and convert to mp3
 def download_yt_video_to_mp3(yt_url, output_filename):
@@ -24,7 +24,7 @@ def download_yt_video_to_mp3(yt_url, output_filename):
         ydl.download([yt_url])
 
 # Download the YouTube video and save as mp3 in the current working directory
-yt_url = "yturl"  # Replace with the actual YouTube URL
+yt_url = ""  
 output_filename = "downloaded_audio.mp3"
 download_yt_video_to_mp3(yt_url, output_filename)
 
@@ -59,13 +59,13 @@ with open("transcript.md", "w") as transcript_file:
         # Open the exported chunk to send for transcription
         with open(chunk_filename, "rb") as audio_file:
             # Call the updated transcription API
-            transcript_response = client.audio.transcriptions.create(
-                model="whisper-1", 
+            transcript_response = client.audio.transcription.create(
+                model="whisper-1",
                 file=audio_file
             )
 
         # Access the transcription text directly from the '.text' attribute
-        transcription_text = transcript_response.text
+        transcription_text = transcript_response['text']
 
         # Write the transcription text to the .md file
         transcript_file.write(transcription_text + "\n\n")
